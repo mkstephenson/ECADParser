@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class RR : BaseElement
+  public class RR : BaseElement
   {
     public RR()
     {
 
     }
 
-    internal RR(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public RR(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       Precipitation = int.Parse(row.Field<string>("RR"));
       PrecipitationQuality = int.Parse(row.Field<string>("Q_RR"));

@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class QQ : BaseElement
+  public class QQ : BaseElement
   {
     public QQ()
     {
 
     }
 
-    internal QQ(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public QQ(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       GlobalRadiation = int.Parse(row.Field<string>("QQ"));
       GlobalRadiationQuality = int.Parse(row.Field<string>("Q_QQ"));

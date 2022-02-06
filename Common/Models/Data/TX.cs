@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class TX : BaseElement
+  public class TX : BaseElement
   {
     public TX()
     {
 
     }
 
-    internal TX(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public TX(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       MaxTemperature = int.Parse(row.Field<string>("TX"));
       MaxTemperatureQuality = int.Parse(row.Field<string>("Q_TX"));

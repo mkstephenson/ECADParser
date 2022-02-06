@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class BaseElement
+  public class BaseElement
   {
     public BaseElement()
     {

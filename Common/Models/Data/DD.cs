@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class DD : BaseElement
+  public class DD : BaseElement
   {
     public DD()
     {
 
     }
 
-    internal DD(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public DD(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       WindDirection = int.Parse(row.Field<string>("DD"));
       WindDirectionQuality = int.Parse(row.Field<string>("Q_DD"));

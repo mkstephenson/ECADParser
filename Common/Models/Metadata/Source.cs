@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECADParser.Models.Metadata
+namespace Common.Models.Metadata
 {
-  internal class Source
+  public class Source
   {
     [Key]
     public int SourceId { get; set; }

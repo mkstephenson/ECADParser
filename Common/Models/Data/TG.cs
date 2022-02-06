@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class TG : BaseElement
+  public class TG : BaseElement
   {
     public TG()
     {
 
     }
 
-    internal TG(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public TG(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       MeanTemperature = int.Parse(row.Field<string>("TG"));
       MeanTemperatureQuality = int.Parse(row.Field<string>("Q_TG"));

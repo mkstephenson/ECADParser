@@ -1,15 +1,15 @@
 ﻿using System.Data;
 
-namespace ECADParser.Models.Data
+namespace Common.Models.Data
 {
-  internal class SS : BaseElement
+  public class SS : BaseElement
   {
     public SS()
     {
 
     }
 
-    internal SS(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
+    public SS(DataRow row) : base(row.Field<string>("STAID"), row.Field<string>("SOUID"), row.Field<string>("DATE"))
     {
       Sunshine = int.Parse(row.Field<string>("SS"));
       SunshineQuality = int.Parse(row.Field<string>("Q_SS"));

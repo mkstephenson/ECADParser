@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECADParser.Models.Metadata
+namespace Common.Models.Metadata
 {
-  internal class Element
+  public class Element
   {
     [Key]
     [MaxLength(5)]

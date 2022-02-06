@@ -1,16 +1,16 @@
-﻿using ECADParser.Models.Data;
-using ECADParser.Models.Metadata;
+﻿using Common.Models.Data;
+using Common.Models.Metadata;
 using Microsoft.EntityFrameworkCore;
 
-namespace ECADParser.Models
+namespace Common.Models
 {
-  internal class ECADContext : DbContext
+  public class ECADContext : DbContext
   {
     private readonly string _connectionString;
 
     public ECADContext(string connectionString)
     {
-      this._connectionString = connectionString;
+      _connectionString = connectionString;
     }
 
     public DbSet<CC> CC { get; set; }
