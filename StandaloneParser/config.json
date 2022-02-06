@@ -1,0 +1,18 @@
+{
+  "DataLocations": {
+    "CC": "ECA/ECA_nonblend_cc",
+    "DD": "ECA/ECA_nonblend_dd",
+    "FG": "ECA/ECA_nonblend_fg",
+    "FX": "ECA/ECA_nonblend_fx",
+    "HU": "ECA/ECA_nonblend_hu",
+    "PP": "ECA/ECA_nonblend_pp",
+    "QQ": "ECA/ECA_nonblend_qq",
+    "RR": "ECA/ECA_nonblend_rr",
+    "SD": "ECA/ECA_nonblend_sd",
+    "SS": "ECA/ECA_nonblend_ss",
+    "TG": "ECA/ECA_nonblend_tg",
+    "TN": "ECA/ECA_nonblend_tn",
+    "TX": "ECA/ECA_nonblend_tx"
+  },
+  "ConnectionString": "Data Source=localhost;User ID=sa;Password=***;Initial Catalog=ECADDB"
+}
