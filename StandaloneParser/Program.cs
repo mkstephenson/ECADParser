@@ -1,6 +1,6 @@
-﻿using Common.Models;
+﻿using Common;
+using Common.Models;
 using Common.Models.Data;
-using Common.Models.Metadata;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Text.Json;
@@ -91,134 +91,22 @@ void PopulateCollection(string typeName, Action<DataRow, ECADContext> addElement
   var folder = locationsConfig.GetProperty(typeName).GetString();
   Console.WriteLine($"Parsing files in folder {folder}");
   Console.WriteLine("Adding metadata");
-  AddStations(folder);
-  AddSources(folder);
-  AddElements(folder);
+  TableHelpers.AddStations(dbContext, folder);
+  TableHelpers.AddSources(dbContext, folder);
+  TableHelpers.AddElements(dbContext, folder);
 
   Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
   {
     MaxDegreeOfParallelism = 4
   }, file =>
-  //foreach (var file in Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)))
   {
     Console.WriteLine($"Adding content from file {file}");
     using var dbContext = new ECADContext(connectionString);
-    var tableContent = ParseTable(file);
+    var tableContent = TableHelpers.ParseTable(file);
     foreach (DataRow row in tableContent.Rows)
     {
       addElementToCollection(row, dbContext);
     }
     dbContext.SaveChanges();
   });
-}
-
-void AddStations(string folderPath)
-{
-  var table = ParseTable(Path.Combine(folderPath, "stations.txt"));
-  foreach (DataRow row in table.Rows)
-  {
-    var newStation = new Station
-    {
-      StationId = int.Parse(row.Field<string>("STAID")),
-      StationName = row.Field<string>("STANAME"),
-      CountryCode = row.Field<string>("CN"),
-      Latitude = row.Field<string>("LAT"),
-      Longitude = row.Field<string>("LON"),
-      Height = int.Parse(row.Field<string>("HGHT"))
-    };
-
-    if (dbContext.Stations.Find(newStation.StationId) == null)
-    {
-      dbContext.Stations.Add(newStation);
-    }
-  }
-  dbContext.SaveChanges();
-}
-
-void AddSources(string folderPath)
-{
-  var table = ParseTable(Path.Combine(folderPath, "sources.txt"));
-  foreach (DataRow row in table.Rows)
-  {
-    var newSource = new Source
-    {
-      SourceId = int.Parse(row.Field<string>("SOUID")),
-      SourceName = row.Field<string>("SOUNAME"),
-      CountryCode = row.Field<string>("CN"),
-      Latitude = row.Field<string>("LAT"),
-      Longitude = row.Field<string>("LON"),
-      Height = int.Parse(row.Field<string>("HGHT")),
-      ElementId = row.Field<string>("ELEID"),
-      Start = DateTime.ParseExact(row.Field<string>("START"), "yyyyMMdd", null),
-      End = DateTime.ParseExact(row.Field<string>("STOP"), "yyyyMMdd", null),
-      ParticipantId = int.Parse(row.Field<string>("PARID")),
-      ParticipantName = row.Field<string>("PARNAME")
-    };
-
-    if (dbContext.Sources.Find(newSource.SourceId) == null)
-    {
-      dbContext.Sources.Add(newSource);
-    }
-  }
-  dbContext.SaveChanges();
-}
-
-void AddElements(string folderPath)
-{
-  var table = ParseTable(Path.Combine(folderPath, "elements.txt"));
-  foreach (DataRow row in table.Rows)
-  {
-    var newElement = new Element
-    {
-      ElementId = row.Field<string>("ELEID"),
-      Description = row.Field<string>("DESC"),
-      Unit = row.Field<string>("UNIT")
-    };
-
-    if (dbContext.Elements.Find(newElement.ElementId) == null)
-    {
-      dbContext.Elements.Add(newElement);
-    }
-  }
-  dbContext.SaveChanges();
-}
-
-DataTable ParseTable(string fileName)
-{
-  var lines = File.ReadAllLines(fileName).SkipWhile(l => !l.StartsWith("FILE FORMAT")).Skip(2);
-  var linesWithFileFormat = lines.TakeWhile(l => l != string.Empty).Select(l => l.Trim());
-
-  Dictionary<string, int[]> columnWidths = new();
-
-  foreach (var lf in linesWithFileFormat)
-  {
-    var stringsToProcess = lf.Replace("- ", "-").Split(':');
-    var columnsWithData = stringsToProcess[0].Split(' ')[0].Split('-').Select(i => int.Parse(i));
-    var columnName = stringsToProcess[0].Split(' ')[1];
-    var description = stringsToProcess[1];
-    columnWidths.Add(columnName, columnsWithData.ToArray());
-  }
-
-  var linesWithData = lines.SkipWhile(l => !columnWidths.Keys.All(d => l.Contains(d))).Skip(1).Where(l => !string.IsNullOrWhiteSpace(l));
-  var dataTable = new DataTable();
-
-  foreach (var c in columnWidths)
-  {
-    dataTable.Columns.Add(c.Key);
-  }
-
-  foreach (var line in linesWithData)
-  {
-    var row = dataTable.NewRow();
-    foreach (var column in columnWidths)
-    {
-      var startIndex = column.Value[0] - 1;
-      var length = column.Value[1] - startIndex;
-      var value = line.Substring(startIndex, length);
-      row[column.Key] = value.Trim();
-    }
-    dataTable.Rows.Add(row);
-  }
-
-  return dataTable;
 }
