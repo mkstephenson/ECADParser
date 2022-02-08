@@ -14,7 +14,12 @@ namespace Common
   {
     public static void AddStations(ECADContext dbContext, string folderPath)
     {
-      var table = ParseTable(Path.Combine(folderPath, "stations.txt"));
+      AddStations(dbContext, File.ReadAllLines(Path.Combine(folderPath, "stations.txt")));
+    }
+
+    public static void AddStations(ECADContext dbContext, string[] lines)
+    {
+      var table = ParseTable(lines);
       foreach (DataRow row in table.Rows)
       {
         var newStation = new Station
@@ -37,7 +42,12 @@ namespace Common
 
     public static void AddSources(ECADContext dbContext, string folderPath)
     {
-      var table = ParseTable(Path.Combine(folderPath, "sources.txt"));
+      AddSources(dbContext, File.ReadAllLines(Path.Combine(folderPath, "sources.txt")));
+    }
+
+    public static void AddSources(ECADContext dbContext, string[] lines)
+    {
+      var table = ParseTable(lines);
       foreach (DataRow row in table.Rows)
       {
         var newSource = new Source
@@ -65,7 +75,12 @@ namespace Common
 
     public static void AddElements(ECADContext dbContext, string folderPath)
     {
-      var table = ParseTable(Path.Combine(folderPath, "elements.txt"));
+      AddElements(dbContext, File.ReadAllLines(Path.Combine(folderPath, "elements.txt")));
+    }
+
+    public static void AddElements(ECADContext dbContext, string[] lines)
+    {
+      var table = ParseTable(lines);
       foreach (DataRow row in table.Rows)
       {
         var newElement = new Element
@@ -85,7 +100,12 @@ namespace Common
 
     public static DataTable ParseTable(string fileName)
     {
-      var lines = File.ReadAllLines(fileName).SkipWhile(l => !l.StartsWith("FILE FORMAT")).Skip(2);
+      return ParseTable(File.ReadAllLines(fileName));
+    }
+
+    public static DataTable ParseTable(string[] inputLines)
+    {
+      var lines = inputLines.SkipWhile(l => !l.StartsWith("FILE FORMAT")).Skip(2);
       var linesWithFileFormat = lines.TakeWhile(l => l != string.Empty).Select(l => l.Trim());
 
       Dictionary<string, int[]> columnWidths = new();
