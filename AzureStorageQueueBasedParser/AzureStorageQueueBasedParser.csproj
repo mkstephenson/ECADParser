@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Queues" Version="12.8.0" />
-    <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="6.13.9" />
   </ItemGroup>
 
   <ItemGroup>

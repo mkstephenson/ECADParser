@@ -126,20 +126,18 @@ namespace Common
         foreach (var column in columnWidths)
         {
           var startIndex = column.Value[0] - 1;
-          var length = column.Value[1] - startIndex;
-          if (true)
+          var endIndex = column.Value[1];
+          if (endIndex > line.Length)
           {
-
+            break;
           }
-          var value = line[startIndex..(startIndex+length)];
-          
-          row[column.Key] = value.Trim();
+
+          row[column.Key] = line[startIndex..endIndex].Trim();
         }
-        //dataTable.Rows.Add(row);
+        dataTable.Rows.Add(row);
       }
 
       return dataTable;
     }
-
   }
 }

@@ -121,7 +121,7 @@ for (int i = 0; i < Environment.ProcessorCount * 4; i++)
                 dbContext.TX.Add(new Common.Models.Data.TX(row));
               }
             }
-            dbContext.BulkSaveChanges();
+            dbContext.SaveChanges();
           }
           await queue.DeleteMessageAsync(response.Value.MessageId, response.Value.PopReceipt);
         }

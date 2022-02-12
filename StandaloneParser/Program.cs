@@ -11,10 +11,10 @@ var connectionString = configDoc.RootElement.GetProperty("ConnectionString").Get
 var locationsConfig = JsonSerializer.Deserialize<Dictionary<string, string>>(configDoc.RootElement.GetProperty("DataLocations"));
 
 using var dbContext = new ECADContext(connectionString);
-//if (dbContext.Database.GetPendingMigrations().Any())
-//{
-//  dbContext.Database.Migrate();
-//}
+if (dbContext.Database.GetPendingMigrations().Any())
+{
+  dbContext.Database.Migrate();
+}
 
 /*
  * Cloud Cover
