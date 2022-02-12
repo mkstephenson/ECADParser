@@ -5,15 +5,16 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Text.Json;
 
-var config = JsonDocument.Parse(File.ReadAllText("config.json")).RootElement;
-var connectionString = config.GetProperty("ConnectionString").GetString();
-var locationsConfig = config.GetProperty("DataLocations");
+var configDoc = JsonDocument.Parse(File.ReadAllText("config.json"));
+
+var connectionString = configDoc.RootElement.GetProperty("ConnectionString").GetString();
+var locationsConfig = JsonSerializer.Deserialize<Dictionary<string, string>>(configDoc.RootElement.GetProperty("DataLocations"));
 
 using var dbContext = new ECADContext(connectionString);
-if (dbContext.Database.GetPendingMigrations().Any())
-{
-  dbContext.Database.Migrate();
-}
+//if (dbContext.Database.GetPendingMigrations().Any())
+//{
+//  dbContext.Database.Migrate();
+//}
 
 /*
  * Cloud Cover
@@ -85,10 +86,9 @@ Console.WriteLine("Finished parsing values");
 /*
  * Helper Methods
  */
-
 void PopulateCollection(string typeName, Action<DataRow, ECADContext> addElementToCollection)
 {
-  var folder = locationsConfig.GetProperty(typeName).GetString();
+  var folder = locationsConfig[typeName];
   Console.WriteLine($"Parsing files in folder {folder}");
   Console.WriteLine("Adding metadata");
   TableHelpers.AddStations(dbContext, folder);
@@ -97,7 +97,7 @@ void PopulateCollection(string typeName, Action<DataRow, ECADContext> addElement
 
   Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
   {
-    MaxDegreeOfParallelism = 4
+    MaxDegreeOfParallelism = Environment.ProcessorCount
   }, file =>
   {
     Console.WriteLine($"Adding content from file {file}");

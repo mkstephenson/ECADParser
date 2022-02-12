@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Text.Json;
 
-var config = JsonDocument.Parse(File.ReadAllText("config.json")).RootElement;
-var connectionString = config.GetProperty("ConnectionString").GetString();
-var queueConnectionString = config.GetProperty("QueueConnectionString").GetString();
-var queueName = config.GetProperty("QueueName").GetString();
+var config = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText("config.json"));
+var connectionString = config["ConnectionString"];
+var queueConnectionString = config["QueueConnectionString"];
+var queueName = config["QueueName"];
 
 using (var dbContext = new ECADContext(connectionString))
 {
@@ -21,101 +21,114 @@ using (var dbContext = new ECADContext(connectionString))
 QueueClient queue = new QueueClient(queueConnectionString, queueName);
 queue.CreateIfNotExists();
 
-var httpClient = new HttpClient();
+List<Task> backgroundTasks = new List<Task>();
 
-while (true)
+for (int i = 0; i < Environment.ProcessorCount * 4; i++)
 {
-  var response = await queue.ReceiveMessageAsync();
-  if (response.Value == null)
+  backgroundTasks.Add(Task.Run(async () =>
   {
-    Console.WriteLine("No messages found, waiting 5 seconds");
-    await Task.Delay(5000);
-    continue;
-  }
-  else
-  {
-    Console.WriteLine("Message found, processing");
-    using var dbContext = new ECADContext(connectionString);
-    var path = response.Value.Body.ToString();
-    var fileName = Path.GetFileName(path);
-    var fileContent = await httpClient.GetAsync(path);
-    if (fileContent.IsSuccessStatusCode)
+    var httpClient = new HttpClient();
+    while (true)
     {
-      var lines = await fileContent.Content.ReadAsStringAsync();
-      if (fileName == "stations.txt")
+      var response = await queue.ReceiveMessageAsync();
+      if (response.Value == null)
       {
-        TableHelpers.AddStations(dbContext, lines);
-      }
-      else if (fileName == "sources.txt")
-      {
-        TableHelpers.AddSources(dbContext, lines);
-      }
-      else if (fileName == "elements.txt")
-      {
-        TableHelpers.AddElements(dbContext, lines);
+        Console.WriteLine("No messages found, waiting 5 seconds");
+        await Task.Delay(5000);
+        continue;
       }
       else
       {
-        var table = TableHelpers.ParseTable(lines.Split(Environment.NewLine));
-        foreach (DataRow row in table.Rows)
+        Console.WriteLine("Message found, processing");
+        using var dbContext = new ECADContext(connectionString);
+        var path = response.Value.Body.ToString();
+        var fileName = Path.GetFileName(path);
+        Console.WriteLine($"File to download is {path}");
+        using var fileContent = await httpClient.GetAsync(path);
+        if (fileContent.IsSuccessStatusCode)
         {
-          if (fileName.StartsWith("CC"))
+          var lines = await fileContent.Content.ReadAsStringAsync();
+          Console.WriteLine($"Total string size is {lines.Length}");
+          if (fileName == "stations.txt")
           {
-            dbContext.CC.Add(new Common.Models.Data.CC(row));
+            TableHelpers.AddStations(dbContext, lines);
           }
-          else if (fileName.StartsWith("DD"))
+          else if (fileName == "sources.txt")
           {
-            dbContext.DD.Add(new Common.Models.Data.DD(row));
+            TableHelpers.AddSources(dbContext, lines);
           }
-          else if (fileName.StartsWith("FG"))
+          else if (fileName == "elements.txt")
           {
-            dbContext.FG.Add(new Common.Models.Data.FG(row));
+            TableHelpers.AddElements(dbContext, lines);
           }
-          else if (fileName.StartsWith("FX"))
+          else
           {
-            dbContext.FX.Add(new Common.Models.Data.FX(row));
+            var splitLines = lines.Split('\n').Select(l => l.Trim('\r')).ToArray();
+            var table = TableHelpers.ParseTable(splitLines);
+
+            foreach (DataRow row in table.Rows)
+            {
+              if (fileName.StartsWith("CC"))
+              {
+                dbContext.CC.Add(new Common.Models.Data.CC(row));
+              }
+              else if (fileName.StartsWith("DD"))
+              {
+                dbContext.DD.Add(new Common.Models.Data.DD(row));
+              }
+              else if (fileName.StartsWith("FG"))
+              {
+                dbContext.FG.Add(new Common.Models.Data.FG(row));
+              }
+              else if (fileName.StartsWith("FX"))
+              {
+                dbContext.FX.Add(new Common.Models.Data.FX(row));
+              }
+              else if (fileName.StartsWith("HU"))
+              {
+                dbContext.HU.Add(new Common.Models.Data.HU(row));
+              }
+              else if (fileName.StartsWith("PP"))
+              {
+                dbContext.PP.Add(new Common.Models.Data.PP(row));
+              }
+              else if (fileName.StartsWith("QQ"))
+              {
+                dbContext.QQ.Add(new Common.Models.Data.QQ(row));
+              }
+              else if (fileName.StartsWith("RR"))
+              {
+                dbContext.RR.Add(new Common.Models.Data.RR(row));
+              }
+              else if (fileName.StartsWith("SD"))
+              {
+                dbContext.SD.Add(new Common.Models.Data.SD(row));
+              }
+              else if (fileName.StartsWith("SS"))
+              {
+                dbContext.SS.Add(new Common.Models.Data.SS(row));
+              }
+              else if (fileName.StartsWith("TG"))
+              {
+                dbContext.TG.Add(new Common.Models.Data.TG(row));
+              }
+              else if (fileName.StartsWith("TN"))
+              {
+                dbContext.TN.Add(new Common.Models.Data.TN(row));
+              }
+              else if (fileName.StartsWith("TX"))
+              {
+                dbContext.TX.Add(new Common.Models.Data.TX(row));
+              }
+            }
+            dbContext.BulkSaveChanges();
           }
-          else if (fileName.StartsWith("HU"))
-          {
-            dbContext.HU.Add(new Common.Models.Data.HU(row));
-          }
-          else if (fileName.StartsWith("PP"))
-          {
-            dbContext.PP.Add(new Common.Models.Data.PP(row));
-          }
-          else if (fileName.StartsWith("QQ"))
-          {
-            dbContext.QQ.Add(new Common.Models.Data.QQ(row));
-          }
-          else if (fileName.StartsWith("RR"))
-          {
-            dbContext.RR.Add(new Common.Models.Data.RR(row));
-          }
-          else if (fileName.StartsWith("SD"))
-          {
-            dbContext.SD.Add(new Common.Models.Data.SD(row));
-          }
-          else if (fileName.StartsWith("SS"))
-          {
-            dbContext.SS.Add(new Common.Models.Data.SS(row));
-          }
-          else if (fileName.StartsWith("TG"))
-          {
-            dbContext.TG.Add(new Common.Models.Data.TG(row));
-          }
-          else if (fileName.StartsWith("TN"))
-          {
-            dbContext.TN.Add(new Common.Models.Data.TN(row));
-          }
-          else if (fileName.StartsWith("TX"))
-          {
-            dbContext.TX.Add(new Common.Models.Data.TX(row));
-          }
+          await queue.DeleteMessageAsync(response.Value.MessageId, response.Value.PopReceipt);
         }
-        dbContext.SaveChanges();
+        Console.WriteLine("Processed message");
       }
-      await queue.DeleteMessageAsync(response.Value.MessageId, response.Value.PopReceipt);
     }
-    Console.WriteLine("Processed message");
-  }
+  }));
 }
+
+Task.WaitAll(backgroundTasks.ToArray());

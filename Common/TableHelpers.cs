@@ -1,12 +1,6 @@
 ﻿using Common.Models;
 using Common.Models.Metadata;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Common
 {
@@ -106,7 +100,7 @@ namespace Common
     public static DataTable ParseTable(string[] inputLines)
     {
       var lines = inputLines.SkipWhile(l => !l.StartsWith("FILE FORMAT")).Skip(2);
-      var linesWithFileFormat = lines.TakeWhile(l => l != string.Empty).Select(l => l.Trim());
+      var linesWithFileFormat = lines.TakeWhile(l => l != string.Empty).Select(l => l.Trim()).ToList();
 
       Dictionary<string, int[]> columnWidths = new();
 
@@ -115,7 +109,6 @@ namespace Common
         var stringsToProcess = lf.Replace("- ", "-").Split(':');
         var columnsWithData = stringsToProcess[0].Split(' ')[0].Split('-').Select(i => int.Parse(i));
         var columnName = stringsToProcess[0].Split(' ')[1];
-        var description = stringsToProcess[1];
         columnWidths.Add(columnName, columnsWithData.ToArray());
       }
 
@@ -134,10 +127,15 @@ namespace Common
         {
           var startIndex = column.Value[0] - 1;
           var length = column.Value[1] - startIndex;
-          var value = line.Substring(startIndex, length);
+          if (true)
+          {
+
+          }
+          var value = line[startIndex..(startIndex+length)];
+          
           row[column.Key] = value.Trim();
         }
-        dataTable.Rows.Add(row);
+        //dataTable.Rows.Add(row);
       }
 
       return dataTable;
