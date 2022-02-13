@@ -1,12 +1,18 @@
 ﻿using Common.Models.Data;
 using Common.Models.Metadata;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Common.Models
 {
   public class ECADContext : DbContext
   {
     private readonly string _connectionString;
+
+    public ECADContext(DbContextOptions options) : base(options)
+    {
+
+    }
 
     public ECADContext(string connectionString)
     {
@@ -35,23 +41,6 @@ namespace Common.Models
       modelBuilder.Entity<Element>().Property(e => e.ElementId).ValueGeneratedNever();
       modelBuilder.Entity<Station>().Property(e => e.StationId).ValueGeneratedNever();
       modelBuilder.Entity<Source>().Property(e => e.SourceId).ValueGeneratedNever();
-
-      modelBuilder.Entity<CC>().IsMemoryOptimized();
-      modelBuilder.Entity<DD>().IsMemoryOptimized();
-      modelBuilder.Entity<FG>().IsMemoryOptimized();
-      modelBuilder.Entity<FX>().IsMemoryOptimized();
-      modelBuilder.Entity<HU>().IsMemoryOptimized();
-      modelBuilder.Entity<PP>().IsMemoryOptimized();
-      modelBuilder.Entity<QQ>().IsMemoryOptimized();
-      modelBuilder.Entity<RR>().IsMemoryOptimized();
-      modelBuilder.Entity<SD>().IsMemoryOptimized();
-      modelBuilder.Entity<SS>().IsMemoryOptimized();
-      modelBuilder.Entity<TG>().IsMemoryOptimized();
-      modelBuilder.Entity<TN>().IsMemoryOptimized();
-      modelBuilder.Entity<TX>().IsMemoryOptimized();
-      modelBuilder.Entity<Station>().IsMemoryOptimized();
-      modelBuilder.Entity<Element>().IsMemoryOptimized();
-      modelBuilder.Entity<Source>().IsMemoryOptimized();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

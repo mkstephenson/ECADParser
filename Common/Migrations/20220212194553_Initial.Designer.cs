@@ -9,22 +9,22 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ECADParser.Migrations
+namespace Common.Migrations
 {
-  [DbContext(typeof(ECADContext))]
-    [Migration("20220205235254_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(ECADContext))]
+    [Migration("20220212194553_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ECADParser.Models.Data.CC", b =>
+            modelBuilder.Entity("Common.Models.Data.CC", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace ECADParser.Migrations
                     b.ToTable("CC");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.DD", b =>
+            modelBuilder.Entity("Common.Models.Data.DD", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,7 +80,7 @@ namespace ECADParser.Migrations
                     b.ToTable("DD");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.FG", b =>
+            modelBuilder.Entity("Common.Models.Data.FG", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +108,7 @@ namespace ECADParser.Migrations
                     b.ToTable("FG");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.FX", b =>
+            modelBuilder.Entity("Common.Models.Data.FX", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,7 +136,7 @@ namespace ECADParser.Migrations
                     b.ToTable("FX");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.HU", b =>
+            modelBuilder.Entity("Common.Models.Data.HU", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -164,7 +164,7 @@ namespace ECADParser.Migrations
                     b.ToTable("HU");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.PP", b =>
+            modelBuilder.Entity("Common.Models.Data.PP", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -192,7 +192,7 @@ namespace ECADParser.Migrations
                     b.ToTable("PP");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.QQ", b =>
+            modelBuilder.Entity("Common.Models.Data.QQ", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -220,7 +220,7 @@ namespace ECADParser.Migrations
                     b.ToTable("QQ");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.RR", b =>
+            modelBuilder.Entity("Common.Models.Data.RR", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,7 @@ namespace ECADParser.Migrations
                     b.ToTable("RR");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.SD", b =>
+            modelBuilder.Entity("Common.Models.Data.SD", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,7 +276,7 @@ namespace ECADParser.Migrations
                     b.ToTable("SD");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.SS", b =>
+            modelBuilder.Entity("Common.Models.Data.SS", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,7 +304,7 @@ namespace ECADParser.Migrations
                     b.ToTable("SS");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.TG", b =>
+            modelBuilder.Entity("Common.Models.Data.TG", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,7 +332,7 @@ namespace ECADParser.Migrations
                     b.ToTable("TG");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.TN", b =>
+            modelBuilder.Entity("Common.Models.Data.TN", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -360,7 +360,7 @@ namespace ECADParser.Migrations
                     b.ToTable("TN");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Data.TX", b =>
+            modelBuilder.Entity("Common.Models.Data.TX", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -388,7 +388,7 @@ namespace ECADParser.Migrations
                     b.ToTable("TX");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Metadata.Element", b =>
+            modelBuilder.Entity("Common.Models.Metadata.Element", b =>
                 {
                     b.Property<string>("ElementId")
                         .HasMaxLength(5)
@@ -409,7 +409,7 @@ namespace ECADParser.Migrations
                     b.ToTable("Elements");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Metadata.Source", b =>
+            modelBuilder.Entity("Common.Models.Metadata.Source", b =>
                 {
                     b.Property<int>("SourceId")
                         .HasColumnType("int");
@@ -461,7 +461,7 @@ namespace ECADParser.Migrations
                     b.ToTable("Sources");
                 });
 
-            modelBuilder.Entity("ECADParser.Models.Metadata.Station", b =>
+            modelBuilder.Entity("Common.Models.Metadata.Station", b =>
                 {
                     b.Property<int>("StationId")
                         .HasColumnType("int");

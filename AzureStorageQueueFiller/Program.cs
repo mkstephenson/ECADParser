@@ -26,5 +26,5 @@ Parallel.ForEach(shuffledNames, file =>
   var newPath = Path.GetRelativePath(networkSharePath, file);
   var url = new Uri(rootUrl, newPath);
   Console.WriteLine(url.AbsoluteUri);
-  queue.SendMessage(url.AbsoluteUri);
+  //queue.SendMessage(url.AbsoluteUri);
 });

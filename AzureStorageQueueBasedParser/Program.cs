@@ -23,7 +23,7 @@ queue.CreateIfNotExists();
 
 List<Task> backgroundTasks = new List<Task>();
 
-for (int i = 0; i < Environment.ProcessorCount * 4; i++)
+for (int i = 0; i < Environment.ProcessorCount; i++)
 {
   backgroundTasks.Add(Task.Run(async () =>
   {
