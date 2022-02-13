@@ -10,11 +10,11 @@ var configDoc = JsonDocument.Parse(File.ReadAllText("config.json"));
 var connectionString = configDoc.RootElement.GetProperty("ConnectionString").GetString();
 var locationsConfig = JsonSerializer.Deserialize<Dictionary<string, string>>(configDoc.RootElement.GetProperty("DataLocations"));
 
-using var dbContext = new ECADContext(connectionString);
-if (dbContext.Database.GetPendingMigrations().Any())
-{
-  dbContext.Database.Migrate();
-}
+//using var dbContext = new ECADContext(connectionString);
+//if (dbContext.Database.GetPendingMigrations().Any())
+//{
+//  dbContext.Database.Migrate();
+//}
 
 /*
  * Cloud Cover
@@ -91,22 +91,22 @@ void PopulateCollection(string typeName, Action<DataRow, ECADContext> addElement
   var folder = locationsConfig[typeName];
   Console.WriteLine($"Parsing files in folder {folder}");
   Console.WriteLine("Adding metadata");
-  TableHelpers.AddStations(dbContext, folder);
-  TableHelpers.AddSources(dbContext, folder);
-  TableHelpers.AddElements(dbContext, folder);
+  TableHelpers.AddStations(null, folder);
+  TableHelpers.AddSources(null, folder);
+  TableHelpers.AddElements(null, folder);
 
-  Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
-  {
-    MaxDegreeOfParallelism = Environment.ProcessorCount
-  }, file =>
-  {
-    Console.WriteLine($"Adding content from file {file}");
-    using var dbContext = new ECADContext(connectionString);
-    var tableContent = TableHelpers.ParseTable(file);
-    foreach (DataRow row in tableContent.Rows)
-    {
-      addElementToCollection(row, dbContext);
-    }
-    dbContext.SaveChanges();
-  });
+  //Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
+  //{
+  //  MaxDegreeOfParallelism = Environment.ProcessorCount
+  //}, file =>
+  //{
+  //  Console.WriteLine($"Adding content from file {file}");
+  //  using var dbContext = new ECADContext(connectionString);
+  //  var tableContent = TableHelpers.ParseTable(file);
+  //  foreach (DataRow row in tableContent.Rows)
+  //  {
+  //    addElementToCollection(row, dbContext);
+  //  }
+  //  dbContext.SaveChanges();
+  //});
 }

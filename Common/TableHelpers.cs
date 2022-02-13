@@ -1,6 +1,7 @@
 ﻿using Common.Models;
 using Common.Models.Metadata;
 using System.Data;
+using System.Globalization;
 
 namespace Common
 {
@@ -18,12 +19,12 @@ namespace Common
       {
         var newStation = new Station
         {
-          StationId = int.Parse(row.Field<string>("STAID")),
+          StationId = int.TryParse(row.Field<string>("STAID"), out int sval) ? sval : 0,
           StationName = row.Field<string>("STANAME"),
           CountryCode = row.Field<string>("CN"),
           Latitude = row.Field<string>("LAT"),
           Longitude = row.Field<string>("LON"),
-          Height = int.Parse(row.Field<string>("HGHT"))
+          Height = int.TryParse(row.Field<string>("HGHT"), out int hval) ? hval: 0
         };
 
         if (dbContext.Stations.Find(newStation.StationId) == null)
@@ -51,11 +52,11 @@ namespace Common
           CountryCode = row.Field<string>("CN"),
           Latitude = row.Field<string>("LAT"),
           Longitude = row.Field<string>("LON"),
-          Height = int.Parse(row.Field<string>("HGHT")),
+          Height = int.TryParse(row.Field<string>("HGHT"), out var hght) ? hght : default,
           ElementId = row.Field<string>("ELEID"),
-          Start = DateTime.ParseExact(row.Field<string>("START"), "yyyyMMdd", null),
-          End = DateTime.ParseExact(row.Field<string>("STOP"), "yyyyMMdd", null),
-          ParticipantId = int.Parse(row.Field<string>("PARID")),
+          Start = DateTime.TryParseExact(row.Field<string>("START"), "yyyyMMdd", null, DateTimeStyles.None, out var resstart) ? resstart : default,
+          End = DateTime.TryParseExact(row.Field<string>("STOP"), "yyyyMMdd", null, DateTimeStyles.None, out var resend) ? resend : default,
+          ParticipantId = int.TryParse(row.Field<string>("PARID"), out var parid) ? parid : default,
           ParticipantName = row.Field<string>("PARNAME")
         };
 
@@ -132,7 +133,24 @@ namespace Common
             break;
           }
 
-          row[column.Key] = line[startIndex..endIndex].Trim().Trim(',');
+          var candidate = line[startIndex..endIndex].Trim();
+          if (candidate.EndsWith(','))
+          {
+            if (line[line.IndexOf(candidate) - 1] != ',')
+            {
+              startIndex -= 1;
+              endIndex -= 1;
+              row[column.Key] = line[startIndex..endIndex].Trim(); 
+            }
+            else
+            {
+              row[column.Key] = line[startIndex..endIndex].Trim(',').Trim();
+            }
+          }
+          else
+          {
+            row[column.Key] = candidate;
+          }
         }
         dataTable.Rows.Add(row);
       }
