@@ -132,7 +132,7 @@ namespace Common
             break;
           }
 
-          row[column.Key] = line[startIndex..endIndex].Trim();
+          row[column.Key] = line[startIndex..endIndex].Trim().Trim(',');
         }
         dataTable.Rows.Add(row);
       }

@@ -23,7 +23,7 @@ queue.CreateIfNotExists();
 
 List<Task> backgroundTasks = new List<Task>();
 
-for (int i = 0; i < Environment.ProcessorCount; i++)
+for (int i = 0; i < 1; i++)
 {
   backgroundTasks.Add(Task.Run(async () =>
   {
@@ -48,22 +48,22 @@ for (int i = 0; i < Environment.ProcessorCount; i++)
         if (fileContent.IsSuccessStatusCode)
         {
           var lines = await fileContent.Content.ReadAsStringAsync();
+          var splitLines = lines.Split('\n').Select(l => l.Trim('\r')).ToArray();
           Console.WriteLine($"Total string size is {lines.Length}");
           if (fileName == "stations.txt")
           {
-            TableHelpers.AddStations(dbContext, lines);
+            TableHelpers.AddStations(dbContext, splitLines);
           }
           else if (fileName == "sources.txt")
           {
-            TableHelpers.AddSources(dbContext, lines);
+            TableHelpers.AddSources(dbContext, splitLines);
           }
           else if (fileName == "elements.txt")
           {
-            TableHelpers.AddElements(dbContext, lines);
+            TableHelpers.AddElements(dbContext, splitLines);
           }
           else
           {
-            var splitLines = lines.Split('\n').Select(l => l.Trim('\r')).ToArray();
             var table = TableHelpers.ParseTable(splitLines);
 
             foreach (DataRow row in table.Rows)
