@@ -95,18 +95,18 @@ void PopulateCollection(string typeName, Action<DataRow, ECADContext> addElement
   TableHelpers.AddSources(null, folder);
   TableHelpers.AddElements(null, folder);
 
-  //Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
-  //{
-  //  MaxDegreeOfParallelism = Environment.ProcessorCount
-  //}, file =>
-  //{
-  //  Console.WriteLine($"Adding content from file {file}");
-  //  using var dbContext = new ECADContext(connectionString);
-  //  var tableContent = TableHelpers.ParseTable(file);
-  //  foreach (DataRow row in tableContent.Rows)
-  //  {
-  //    addElementToCollection(row, dbContext);
-  //  }
-  //  dbContext.SaveChanges();
-  //});
+  Parallel.ForEach(Directory.EnumerateFiles(folder).Where(f => Path.GetFileName(f).StartsWith(typeName)), new ParallelOptions
+  {
+    MaxDegreeOfParallelism = Environment.ProcessorCount
+  }, file =>
+  {
+    Console.WriteLine($"Adding content from file {file}");
+    using var dbContext = new ECADContext(connectionString);
+    var tableContent = TableHelpers.ParseTableAsync(file);
+    foreach (DataRow row in tableContent.Rows)
+    {
+      addElementToCollection(row, dbContext);
+    }
+    dbContext.SaveChanges();
+  });
 }

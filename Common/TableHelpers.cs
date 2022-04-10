@@ -14,25 +14,41 @@ namespace Common
 
     public static void AddStations(ECADContext dbContext, string[] lines)
     {
+      GetStations(lines).ForEach(s =>
+      {
+        if (dbContext.Stations.Find(s.StationId) == null)
+        {
+          dbContext.Stations.Add(s);
+        }
+      });
+      
+      dbContext.SaveChanges();
+    }
+
+    public static List<Station> GetStations(string folderPath)
+    {
+      return GetStations(File.ReadAllLines(Path.Combine(folderPath, "stations.txt")));
+    }
+
+    public static List<Station> GetStations(string[] lines)
+    {
       var table = ParseTable(lines);
+      var stations = new List<Station>();
+
       foreach (DataRow row in table.Rows)
       {
-        var newStation = new Station
+        stations.Add(new Station
         {
           StationId = int.TryParse(row.Field<string>("STAID"), out int sval) ? sval : 0,
           StationName = row.Field<string>("STANAME"),
           CountryCode = row.Field<string>("CN"),
           Latitude = row.Field<string>("LAT"),
           Longitude = row.Field<string>("LON"),
-          Height = int.TryParse(row.Field<string>("HGHT"), out int hval) ? hval: 0
-        };
-
-        if (dbContext.Stations.Find(newStation.StationId) == null)
-        {
-          dbContext.Stations.Add(newStation);
-        }
+          Height = int.TryParse(row.Field<string>("HGHT"), out int hval) ? hval : 0
+        });
       }
-      dbContext.SaveChanges();
+
+      return stations;
     }
 
     public static void AddSources(ECADContext dbContext, string folderPath)
@@ -42,10 +58,29 @@ namespace Common
 
     public static void AddSources(ECADContext dbContext, string[] lines)
     {
+      GetSources(lines).ForEach(s =>
+      {
+        if (dbContext.Sources.Find(s.SourceId) == null)
+        {
+          dbContext.Sources.Add(s);
+        }
+      });
+
+      dbContext.SaveChanges();
+    }
+
+    public static List<Source> GetSources(string folderPath)
+    {
+      return GetSources(File.ReadAllLines(Path.Combine(folderPath, "sources.txt")));
+    }
+
+    private static List<Source> GetSources(string[] lines)
+    {
       var table = ParseTable(lines);
+      var sources = new List<Source>();
       foreach (DataRow row in table.Rows)
       {
-        var newSource = new Source
+        sources.Add(new Source
         {
           SourceId = int.Parse(row.Field<string>("SOUID")),
           SourceName = row.Field<string>("SOUNAME"),
@@ -53,19 +88,14 @@ namespace Common
           Latitude = row.Field<string>("LAT"),
           Longitude = row.Field<string>("LON"),
           Height = int.TryParse(row.Field<string>("HGHT"), out var hght) ? hght : default,
-          ElementId = row.Field<string>("ELEID"),
+          ElementId = row.Field<string>("ELEID") ?? string.Empty,
           Start = DateTime.TryParseExact(row.Field<string>("START"), "yyyyMMdd", null, DateTimeStyles.None, out var resstart) ? resstart : default,
           End = DateTime.TryParseExact(row.Field<string>("STOP"), "yyyyMMdd", null, DateTimeStyles.None, out var resend) ? resend : default,
           ParticipantId = int.TryParse(row.Field<string>("PARID"), out var parid) ? parid : default,
-          ParticipantName = row.Field<string>("PARNAME")
-        };
-
-        if (dbContext.Sources.Find(newSource.SourceId) == null)
-        {
-          dbContext.Sources.Add(newSource);
-        }
+          ParticipantName = row.Field<string>("PARNAME") ?? string.Empty,
+        });
       }
-      dbContext.SaveChanges();
+      return sources;
     }
 
     public static void AddElements(ECADContext dbContext, string folderPath)
@@ -75,27 +105,41 @@ namespace Common
 
     public static void AddElements(ECADContext dbContext, string[] lines)
     {
+      GetElements(lines).ForEach(e =>
+      {
+        if (dbContext.Elements.Find(e.ElementId) == null)
+        {
+          dbContext.Elements.Add(e);
+        }
+      });
+
+      dbContext.SaveChanges();
+    }
+
+    public static List<Element> GetElements(string folderPath)
+    {
+      return GetElements(File.ReadAllLines(Path.Combine(folderPath, "elements.txt")));
+    }
+
+    public static List<Element> GetElements(string[] lines)
+    {
       var table = ParseTable(lines);
+      var elements = new List<Element>();
       foreach (DataRow row in table.Rows)
       {
-        var newElement = new Element
+        elements.Add(new Element
         {
           ElementId = row.Field<string>("ELEID"),
           Description = row.Field<string>("DESC"),
           Unit = row.Field<string>("UNIT")
-        };
-
-        if (dbContext.Elements.Find(newElement.ElementId) == null)
-        {
-          dbContext.Elements.Add(newElement);
-        }
+        });
       }
-      dbContext.SaveChanges();
+      return elements;
     }
 
-    public static DataTable ParseTable(string fileName)
+    public static async Task<DataTable> ParseTableAsync(string fileName)
     {
-      return ParseTable(File.ReadAllLines(fileName));
+      return ParseTable(await File.ReadAllLinesAsync(fileName));
     }
 
     public static DataTable ParseTable(string[] inputLines)
@@ -140,7 +184,7 @@ namespace Common
             {
               startIndex -= 1;
               endIndex -= 1;
-              row[column.Key] = line[startIndex..endIndex].Trim(); 
+              row[column.Key] = line[startIndex..endIndex].Trim();
             }
             else
             {

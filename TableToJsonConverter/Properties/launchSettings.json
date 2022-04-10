@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "TableToJsonConverter": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false,
+      "authenticationMode": "None"
+    }
+  }
+}

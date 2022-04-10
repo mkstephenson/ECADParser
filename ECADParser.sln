@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageQueueBasedParse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{D9305552-F54E-40EF-8D50-A319C85C12A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureStorageQueueFiller", "AzureStorageQueueFiller\AzureStorageQueueFiller.csproj", "{360C9C07-B662-4C53-B3F4-4D56BFD70EAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureStorageQueueFiller", "AzureStorageQueueFiller\AzureStorageQueueFiller.csproj", "{360C9C07-B662-4C53-B3F4-4D56BFD70EAB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableToJsonConverter", "TableToJsonConverter\TableToJsonConverter.csproj", "{3F499649-EF2A-40FA-9795-078F3C7A28B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{360C9C07-B662-4C53-B3F4-4D56BFD70EAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{360C9C07-B662-4C53-B3F4-4D56BFD70EAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{360C9C07-B662-4C53-B3F4-4D56BFD70EAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F499649-EF2A-40FA-9795-078F3C7A28B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F499649-EF2A-40FA-9795-078F3C7A28B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F499649-EF2A-40FA-9795-078F3C7A28B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F499649-EF2A-40FA-9795-078F3C7A28B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
