@@ -1,15 +1,12 @@
 ﻿using RabbitMQ.Client;
 using System.Text;
-using System.Text.Unicode;
 
 var exchangeName = "x.eca";
 var queueName = "q.eca";
 var routingKey = "eca";
 
 var connectionFactory = new ConnectionFactory();
-
 connectionFactory.HostName = "nas.n12.eu";
-
 var conn = connectionFactory.CreateConnection();
 
 var channel = conn.CreateModel();
